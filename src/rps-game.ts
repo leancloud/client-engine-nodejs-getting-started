@@ -9,6 +9,12 @@ const debug = d("RPS");
 // [✊, ✌️, ✋] wins [✌️, ✋, ✊]
 const wins = [1, 2, 0];
 
+// eventId
+const GAME_START = 10;
+const GAME_PLAY = 11;
+const GAME_OVER = 20;
+
+
 /**
  * 石头剪刀布游戏
  */
@@ -26,20 +32,20 @@ const wins = [1, 2, 0];
   public terminate() {
     // 将游戏 Room 的 open 属性标记为 false，不再允许用户加入了。
     // 客户端可以按照业务需求响应该属性的变化（例如对于还未开始的游戏，客户端可以重新发起加入新游戏请求）。
-    this.masterClient.setRoomOpened(false);
+    this.masterClient.setRoomOpen(false);
     return super.terminate();
   }
 
   protected start = async () => {
     // 标记房间不再可加入
-    this.masterClient.setRoomOpened(false);
+    this.masterClient.setRoomOpen(false);
     // 向客户端广播游戏开始事件
-    this.broadcast("game-start");
+    this.broadcast(GAME_START);
     // 等待所有玩家都已做出选择的时刻
     const playPromise = Promise.all(this.players.map((player) =>
-        this.takeFirst("play", player)
+        this.takeFirst(GAME_PLAY, player)
           // 向其他玩家转发出牌动作，但是隐藏具体的 choice
-          .pipe(tap(_.bind(this.forwardToTheRests, this, _, () => ({})) as typeof RPSGame.prototype.forwardToTheRests))
+          .pipe(tap(_.bind(this.forwardToTheRests, this, _, () => ({}))))
           .toPromise(),
       ));
     // 监听 player 离开游戏事件
@@ -59,7 +65,7 @@ const wins = [1, 2, 0];
     }
     // 游戏结束
     // 向客户端广播游戏结果
-    this.broadcast("game-over", {
+    this.broadcast(GAME_OVER, {
       choices,
       winnerId: winner ? winner.userId : null,
     });
