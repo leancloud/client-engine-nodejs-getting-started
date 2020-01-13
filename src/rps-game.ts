@@ -9,11 +9,11 @@ const debug = d("RPS");
 // [✊, ✌️, ✋] wins [✌️, ✋, ✊]
 const wins = [1, 2, 0];
 
-// eventId
-const GAME_START = 10;
-const GAME_PLAY = 11;
-const GAME_OVER = 20;
-
+enum GameEvent {
+  Start = 10,
+  Play = 11,
+  Over = 20,
+}
 
 /**
  * 石头剪刀布游戏
@@ -40,10 +40,10 @@ const GAME_OVER = 20;
     // 标记房间不再可加入
     this.masterClient.setRoomOpen(false);
     // 向客户端广播游戏开始事件
-    this.broadcast(GAME_START);
+    this.broadcast(GameEvent.Start);
     // 等待所有玩家都已做出选择的时刻
     const playPromise = Promise.all(this.players.map((player) =>
-        this.takeFirst(GAME_PLAY, player)
+        this.takeFirst(GameEvent.Play, player)
           // 向其他玩家转发出牌动作，但是隐藏具体的 choice
           .pipe(tap(_.bind(this.forwardToTheRests, this, _, () => ({}))))
           .toPromise(),
@@ -65,7 +65,7 @@ const GAME_OVER = 20;
     }
     // 游戏结束
     // 向客户端广播游戏结果
-    this.broadcast(GAME_OVER, {
+    this.broadcast(GameEvent.Over, {
       choices,
       winnerId: winner ? winner.userId : null,
     });
