@@ -8,7 +8,7 @@ import d = require("debug");
 import express = require("express");
 import basicAuth = require("express-basic-auth");
 import os = require("os");
-import { APP_ID, APP_KEY, MASTER_KEY } from "./configs";
+import { APP_ID, APP_KEY, API_SERVER, MASTER_KEY } from "./configs";
 import Reception from "./reception";
 import PRSGame from "./rps-game";
 
@@ -23,14 +23,13 @@ app.get("/", (req, res) => {
     `);
 });
 
-const reception = new Reception(
-  PRSGame,
-  APP_ID,
-  APP_KEY,
-  {
-    concurrency: 2,
-  },
-);
+const reception = new Reception({
+  gameConstructor: PRSGame,
+  appId: APP_ID,
+  appKey: APP_KEY,
+  playServer: API_SERVER,
+  concurrency: 2,
+});
 
 const loadBalancerFactory = new LoadBalancerFactory({
   poolId: `${APP_ID.slice(0, 5)}-${process.env.LEANCLOUD_APP_ENV || "development"}`,

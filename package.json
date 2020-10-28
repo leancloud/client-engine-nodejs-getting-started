@@ -19,14 +19,14 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@leancloud/client-engine": "^0.8.0",
-    "@leancloud/play": "^0.18.0-beta.10",
+    "@leancloud/client-engine": "^1.0.0",
+    "@leancloud/play": "^1.0.0",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "debug": "^4.1.1",
     "express": "^4.17.1",
     "express-basic-auth": "^1.2.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.20",
     "rxjs": "^6.5.4",
     "source-map-support": "^0.5.16"
   },
